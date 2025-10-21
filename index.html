@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Valve / Mixing Valve Selector — Two-Panel (Chart.js)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Required libraries (UMD via CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" integrity="" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js" integrity="" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js" integrity="" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css"/>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header" role="banner">
+    <div class="header-content">
+      <h1 data-i18n="app.title">Valve / Mixing Valve Selector</h1>
+      <p class="subtitle" data-i18n="app.subtitle">Interactive ΔT &amp; Kvs families — synchronized two charts. Flow (Q) on X in both panels.</p>
+    </div>
+    <div class="header-actions">
+        <!-- Custom language dropdown with flags (uses native select under the hood for logic) -->
+        <div class="lang-dd">
+          <select id="lang-select" class="visually-hidden" aria-label="Language">
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+            <option value="pl">Polski</option>
+            <option value="zh">中文</option>
+          </select>
+          <button type="button" id="lang-dd-toggle" class="lang-dd-toggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="lang-dd-list">
+            <span class="fi fi-gb" aria-hidden="true"></span>
+            <span class="lang-dd-label">English</span>
+          </button>
+          <ul id="lang-dd-list" class="lang-dd-list" role="listbox" hidden>
+            <li role="option" class="lang-dd-item" data-value="en" aria-selected="true" tabindex="0"><span class="fi fi-gb" aria-hidden="true"></span><span>English</span></li>
+            <li role="option" class="lang-dd-item" data-value="de" aria-selected="false" tabindex="0"><span class="fi fi-de" aria-hidden="true"></span><span>Deutsch</span></li>
+            <li role="option" class="lang-dd-item" data-value="pl" aria-selected="false" tabindex="0"><span class="fi fi-pl" aria-hidden="true"></span><span>Polski</span></li>
+            <li role="option" class="lang-dd-item" data-value="zh" aria-selected="false" tabindex="0"><span class="fi fi-cn" aria-hidden="true"></span><span>中文</span></li>
+          </ul>
+        </div>
+    </div>
+  </header>
+
+  <main class="app-main" role="main">
+    <!-- Controls -->
+    <section class="card controls" aria-labelledby="ctrl-title">
+      <div class="controls-head">
+        <h2 id="ctrl-title" data-i18n="controls.title">Series Selection</h2>
+        <button type="button" id="btn-settings" class="btn icon settings-btn" aria-haspopup="dialog" aria-controls="settings-modal" title="Settings">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+  <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+  <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+</svg>
+        </button>
+      </div>
+
+      <div class="controls-body">
+        <div class="control-group" role="group" aria-labelledby="dt-title">
+          <div class="group-head">
+            <h3 id="dt-title" data-i18n="controls.dt.title">ΔT (°C)</h3>
+            <div class="group-actions">
+              <button type="button" class="btn sm" data-action="select-all" data-target="dt"><span data-i18n="actions.all">All</span></button>
+              <button type="button" class="btn sm" data-action="select-none" data-target="dt"><span data-i18n="actions.none">None</span></button>
+              <button type="button" class="btn sm" data-action="custom" data-target="dt"><span data-i18n="actions.custom">Custom</span></button>
+            </div>
+          </div>
+          <div class="checkboxes" data-group="dt" id="dt-boxes" aria-describedby="dt-help"></div>
+          <p id="dt-help" class="help" data-i18n="controls.dt.help">Select temperature differences for the Power chart.</p>
+        </div>
+
+        <div class="control-group" role="group" aria-labelledby="kvs-title">
+          <div class="group-head">
+            <h3 id="kvs-title" data-i18n="controls.kvs.title">Kvs (m³/h)</h3>
+            <div class="group-actions">
+              <button type="button" class="btn sm" data-action="select-all" data-target="kvs"><span data-i18n="actions.all">All</span></button>
+              <button type="button" class="btn sm" data-action="select-none" data-target="kvs"><span data-i18n="actions.none">None</span></button>
+              <button type="button" class="btn sm" data-action="custom" data-target="kvs"><span data-i18n="actions.custom">Custom</span></button>
+            </div>
+          </div>
+          <div class="checkboxes" data-group="kvs" id="kvs-boxes" aria-describedby="kvs-help"></div>
+          <p id="kvs-help" class="help" data-i18n="controls.kvs.help">Select valve families for the Pressure Drop chart.</p>
+        </div>
+      </div>
+      
+    </section>
+
+    <!-- Charts -->
+    <section class="charts">
+      <div class="panel" aria-labelledby="pwr-title">
+        <div class="panel-head">
+          <h2 id="pwr-title" data-i18n="charts.power.title">Power vs Flow</h2>
+          <!-- <div class="axis-note" id="pwr-axis-note" data-i18n="charts.power.axisNote">ΔT</div> -->
+          <button type="button" class="btn sm ax-btn" title="Axes" aria-label="Axes">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>
+            </svg>
+          </button>
+        </div>
+        <div id="legendPower" class="chart-legend" aria-label="Legend for Power chart"></div>
+        <div class="canvas-wrap">
+          <canvas id="chartPower" aria-label="Power versus Flow chart" role="img"></canvas>
+          <div class="hover-tooltip" id="hoverTooltipP" role="tooltip" hidden></div>
+        </div>
+      </div>
+
+      <div class="panel" aria-labelledby="dp-title">
+        <div class="panel-head">
+          <h2 id="dp-title" data-i18n="charts.dp.title">Pressure Drop vs Flow</h2>
+          <!-- <div class="axis-note" id="dp-axis-note" data-i18n="charts.dp.axisNote">Kvs</div> -->
+          <button type="button" class="btn sm ax-btn" title="Axes" aria-label="Axes">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>
+            </svg>
+          </button>
+        </div>
+        <div id="legendDP" class="chart-legend" aria-label="Legend for Pressure Drop chart"></div>
+        <div class="canvas-wrap">
+          <canvas id="chartDP" aria-label="Pressure Drop versus Flow chart" role="img"></canvas>
+          <div class="hover-tooltip" id="hoverTooltipDP" role="tooltip" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary Panel (empty-state + dynamic content) -->
+    <section id="summary-panel" class="card summary-panel" role="region" aria-labelledby="summary-title">
+      <h2 id="summary-title" data-i18n="summary.title">Selection Summary</h2>
+      <div id="summary-content" class="summary-content" aria-live="polite"></div>
+    </section>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden>
+      <div class="modal-backdrop" data-close="settings"></div>
+      <div class="modal-content" role="document">
+        <div class="modal-header">
+          <h3 id="settings-title" data-i18n="settings.title">Settings</h3>
+          <button type="button" class="btn icon close" id="settings-close" aria-label="Close settings">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="control-group" role="group" aria-labelledby="disp-title">
+            <div class="group-head">
+              <h3 id="disp-title" data-i18n="settings.display.title">Display</h3>
+            </div>
+            <label class="checkbox" for="show-legends">
+              <input type="checkbox" id="show-legends" checked>
+              <span class="tag" data-i18n="settings.showLegends.label">Show legends</span>
+            </label>
+            <p class="help" data-i18n="settings.showLegends.help">Show ΔT and Kvs legends above the diagrams.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" id="settings-done" data-i18n="settings.done">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Values Modal -->
+    <div id="custom-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="custom-title" hidden>
+      <div class="modal-backdrop" data-close="custom"></div>
+      <div class="modal-content" role="document">
+        <div class="modal-header">
+          <h3 id="custom-title">Custom values</h3>
+          <button type="button" class="btn icon close" id="custom-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="custom-instructions" class="help"></p>
+          <label class="input" for="custom-input">
+            <input type="text" id="custom-input" placeholder="">
+          </label>
+          <p id="custom-error" class="help" style="color:#dc2626;" aria-live="polite"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" id="custom-cancel" data-i18n="customModal.cancel">Cancel</button>
+          <button type="button" class="btn" id="custom-confirm" data-i18n="customModal.confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Axes Modal -->
+    <div id="axes-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="axes-title" hidden>
+      <div class="modal-backdrop" data-close="axes"></div>
+      <div class="modal-content" role="document">
+        <div class="modal-header">
+          <h3 id="axes-title" data-i18n="axes.title">Axes</h3>
+          <button type="button" class="btn icon close" id="axes-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="control-group" role="group" aria-labelledby="ax-q-title">
+            <div class="group-head"><h3 id="ax-q-title" data-i18n="axes.section.q">Flow (Q) [l/h]</h3></div>
+            <div class="grid-2">
+              <label class="input"><input type="number" id="ax-qmin" step="any" placeholder=""></label>
+              <label class="input"><input type="number" id="ax-qmax" step="any" placeholder=""></label>
+            </div>
+          </div>
+          <div class="control-group" role="group" aria-labelledby="ax-p-title">
+            <div class="group-head"><h3 id="ax-p-title" data-i18n="axes.section.p">Power (P) [kW]</h3></div>
+            <div class="grid-2">
+              <label class="input"><input type="number" id="ax-pmin" step="any" placeholder=""></label>
+              <label class="input"><input type="number" id="ax-pmax" step="any" placeholder=""></label>
+            </div>
+          </div>
+          <div class="control-group" role="group" aria-labelledby="ax-dp-title">
+            <div class="group-head"><h3 id="ax-dp-title" data-i18n="axes.section.dp">Δp [kPa]</h3></div>
+            <div class="grid-2">
+              <label class="input"><input type="number" id="ax-dpmin" step="any" placeholder=""></label>
+              <label class="input"><input type="number" id="ax-dpmax" step="any" placeholder=""></label>
+            </div>
+          </div>
+          <p class="help" id="axes-error" aria-live="polite"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" id="axes-cancel" data-i18n="axes.cancel">Cancel</button>
+          <button type="button" class="btn" id="axes-apply" data-i18n="axes.apply">Apply</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="app-footer" role="contentinfo">
+    <small data-i18n="footer.note">Formulas (water): Q<sub>l/h</sub>=860·P<sub>kW</sub>/ΔT; Δp<sub>kPa</sub>=100·(Q<sub>m³/h</sub>/Kvs)². </small>
+  </footer>
+
+  <script type="module" src="constants.js"></script>
+  <script type="module" src="script.min.js"></script>
+ </body>
+ </html>
